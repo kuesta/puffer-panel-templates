@@ -68,6 +68,12 @@
       "type": "move",
       "source": "velocity-*.jar",
       "target": "velocity.jar"
+    },
+    {
+      "if": "!file_exists(\"velocity.toml\")",
+      "type": "writefile",
+      "target": "velocity.toml",
+      "text": "bind = \"${ip}:${port}\"\nmotd = \"${motd}\""
     }
   ],
   "run": {
@@ -81,6 +87,24 @@
       }
     ],
     "stop": "shutdown",
+    "pre": [
+      {
+        "if": "file_exists(\"velocity.toml\")",
+        "type": "alterfile",
+        "replace": "bind = \"${ip}:${port}\"",
+        "file": "velocity.toml",
+        "regex": true,
+        "search": "(bind = .*:\\w*\")"
+      },
+      {
+        "if": "file_exists(\"velocity.toml\")",
+        "type": "alterfile",
+        "regex": true,
+        "search": "(motd = \".*\")",
+        "replace": "motd = \"${motd}\"",
+        "file": "velocity.toml"
+        }
+    ],
     "stdin": {
       "type": "stdin"
     },
